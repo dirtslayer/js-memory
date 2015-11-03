@@ -5,6 +5,7 @@ javascript / ocanvas version of memory
     live : https://js-memory-semisided1.c9.io/js-memory.html
     
     video outline
+    https://youtu.be/UAybOgBmUpI
     
     create a project in cloud9 http://c9.io
     git clone https://github.com/semisided1/js-memory .
