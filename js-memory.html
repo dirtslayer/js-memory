@@ -5,7 +5,7 @@
 </head>
 <body>
 <canvas id="canvas" width="1130" height="960"></canvas>
-<script src="js/ocanvas-2.8.1.js"></script>
+<script src="ocanvas/build/dist/latest/ocanvas.js"></script>
 <script>
 	
 var canvas = oCanvas.create({ canvas: "#canvas", background: "#000000" });
@@ -22,7 +22,7 @@ var dims = [];
 
 function Card(pos, r,i,f) {
 this.position = pos;
-this.rect = r;
+this.mrect = r;
 this.image = i;
 this.flipped = f;
 this.matched = false;
@@ -30,8 +30,8 @@ this.matched = false;
 
 var cards = [];
 for (var i = 0, l = 8; i < l; i++) {
- dims[i] =  { center:75 + ( 120  * i ), top:50 };
- dims[i+8] = { center:75 + (120 * i), top:220 };
+ dims[i] =  { center:75 + ( 130  * i ), top:50 };
+ dims[i+8] = { center:75 + (130 * i), top:270 };
 }    
 
 function n_cards_flipped() {
@@ -58,117 +58,117 @@ function get_unmatched_flipped() {
     return atoret;
 }
 
-for (var i = 0, l = 16; i < l; i++) {
-    var rectangle = canvas.display.rectangle({
-        position: i,
-        x: dims[i],
-        y: mytop,
-        width: 120,
-        height: 170,
-        fill: "#00ccaa",
-        	origin: { x: "center", y: "top" }
-        
-    });
-    
-    rectangle.bind("click tap", function () {
-        var c = getCardfromRect(this);
-        c.flipped = true;
+function image_clicked(obj_this) {
+    console.log("image clicked " + obj_this.x);
+    var c = getCardfromImg(obj_this);
+    c.flipped = false;
       
-      	this.animate({
-		    width: 0
-	}, {
+    obj_this.animate({width: 1}, { // i want to do zero here
+                                    // but there is some kind of issue, the
+                                    // center mode is shifting on the base
+                                    // image
 		duration: "short",
 		easing: "ease-in-out-cubic",
 		callback: function () {
-			this.remove();
-			c.image.width = 0;
-	       
-	        c.image.animate({
-		    width: 120
-	}, {
-		duration: "short",
-		easing: "ease-in-out-cubic"
-	}
-		
-		);
+		//	this.fill = "#f00";
+		    c.image.height = 1; c.image.opacity = 0; // groan
+			c.mrect.animate({width: 120}, {
+	    duration:"short",
+	    easing: "ease-in-out-cubic",
+		callback: function () {
+		//	this.fill = "#f00";
 			canvas.redraw();
 		}
 	});
+			canvas.redraw();
+		}
+	});
+
+}
+// this is a test
+function rect_clicked(obj_this) {
+    console.log("rect clicked " + obj_this.x);
+    var c = getCardfromRect(obj_this);
+    c.flipped = true;
+     
+    obj_this.animate( {width: 0}, {
+		duration: "short",
+		easing: "ease-in-out-cubic",
+		callback: function () {
+/*		    c.image.width = 0;
+	        c.image.animate({width: 120}, {
+		        duration: "short",
+		        easing: "ease-in-out-cubic"
+	        });
+*/			//canvas.redraw();
+	c.image.x = c.mrect.x;
+	c.image.y = c.mrect.y;
+	c.image.width = 1;
+	c.image.height = c.mrect.height;
+	c.image.opacity = 1;
+	
+   c.image.animate( {width: 120}, {
+		duration: "short",
+		easing: "ease-in-out-cubic",
+		callback: function (c) {
+/*		    c.image.width = 0;
+	        c.image.animate({width: 120}, {
+		        duration: "short",
+		        easing: "ease-in-out-cubic"
+	        });
+*/			//canvas.redraw();
+		}
+	});
+		}
+	});
+	
+
       
-      
-      
-        
-	  
-	    var af = get_unmatched_flipped();
-	    
-	    console.log("unmatched flipped length:" + af.length);
-	    
-	    if (af.length == 2 ) {
-	        if ( af[0].image.image == af[1].image.image) {
-	            af[0].matched = true;
-	            af[1].matched = true;
-	        } else {
-	            // wait
-	            af[0].flipped = false;
-	            af[1].flipped = false;
-	            af[0].image.remove();
-	            canvas.addChild(af[0].rect);
-	            canvas.addChild(af[1].rect);
-	        }
-	    }
-	    
-	    
+    var af = get_unmatched_flipped();
+	if (af.length == 2 ) {
+	    if ( af[0].image.image == af[1].image.image) {
+	        af[0].matched = true;
+	        af[1].matched = true;
+	    } else {
+            // wait
+            af[0].flipped = false;
+            af[1].flipped = false;
+        }
+    }
+}
+
+for (var i = 0, l = 16; i < l; i++) {
+    var rectangle = canvas.display.rectangle({
+        position: i,
+        x: dims[i].center,
+        y: dims[i].top,
+        width: 120,
+        height: 170,
+        fill: "#00ccaa",
+        origin: { x: "center", y: "top" }
     });
     
+    rectangle.bind("click tap", function() { rect_clicked(this); } );
     canvas.addChild(rectangle);
     
     var the_index = Math.floor(i/2);
     var ifile = image_base_url + img_files[the_index];
   
     var image_to_add = canvas.display.image({
-        
-    	x: left,
-    	y: mytop,
-    	width : 120,
-    	height: 170,
+    	x:1,
+    	y: 1,
+    	width : 10,
+    	height: 10,
+    	opacity: 0,
     	origin: { x: "center", y: "top" },
     	image: ifile,
-    	
     });
     
    canvas.addChild(image_to_add);
    
-   image_to_add.animate({
-		width: 0
-	}, {
-		duration: 0,
-		easing: "ease-in-out-cubic",
-		callback: function () {
-		//	this.fill = "#f00";
-			canvas.redraw();
-		}
-	});
-   
-   image_to_add.bind("click tap", function() {
-       // notify card to flip??
-      // this.remove(true);
-      var c = getCardfromImg(this);
-      
-        c.flipped = false;
-       
-       this.animate({
-		width: 0
-	}, {
-		duration: 0,
-		easing: "ease-in-out-cubic",
-		callback: function () {
-		//	this.fill = "#f00";
-			canvas.redraw();
-		}
-	});
-   });
-   
-   cards.push( new Card(rectangle,image_to_add,false));
+   image_to_add.bind("click tap", function() { image_clicked(this); } );
+  
+   cards.push( new Card(i,rectangle,image_to_add,false));
 
 }
 /*
@@ -187,14 +187,15 @@ for (var i = 0, l = 16; i < l; i++) {
 */
    function getCardfromRect(robj) {
         for(var i=0; i<cards.length; i++) {
-            if (cards[i].rect == robj) return cards[i];
+            if (cards[i].mrect.x == robj.x && cards[i].mrect.y == robj.y ) return cards[i];
         }
         return null;
     }
     
     function getCardfromImg(iobj) {
         for(var i=0; i<cards.length; i++) {
-            if (cards[i].image == iobj) return cards[i];
+            
+            if (cards[i].image.x == iobj.x && cards[i].image.y == iobj.y) return cards[i];
         }
         return null;
     } 
