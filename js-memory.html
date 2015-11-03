@@ -8,6 +8,7 @@
     <p> source : <a href=" https://github.com/semisided1/js-memory">https://github.com/semisided1/js-memory</a> </p>
     <p> live : <a href="https://js-memory-semisided1.c9.io/js-memory.html">https://js-memory-semisided1.c9.io/js-memory.html</a></p>
     <P> javascript with ocanvas demo </P>
+    <p> <a href="https://youtu.be/UAybOgBmUpI">absolute beginner youtube</a></p>
 <canvas id="canvas" width="1200" height="700"></canvas>
 <script src="ocanvas/build/dist/latest/ocanvas.js"></script>
 <script>
@@ -22,15 +23,13 @@ var img_files = ['boss/boss.png', 'doh/doh.png', 'freezing/freezing.png', 'hot/h
  ];
 
 var dims = [];
-
-
-function Card(pos, r,i,f) {
-this.position = pos;
-this.mrect = r;
-this.image = i;
-this.flipped = f;
-this.matched = false;
-} 
+function Card(pos, r, i, f) {
+    this.position = pos;
+    this.mrect = r;
+    this.image = i;
+    this.flipped = f;
+    this.matched = false;
+}
 
 var cards = [];
 for (var i = 0, l = 8; i < l; i++) {
